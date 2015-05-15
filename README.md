@@ -6,7 +6,7 @@
 
 ### Installation
 
-The installation of docker is out of scale of this tutorial, please refer the official [document](https://docs.docker.com/installation/ubuntulinux/) for the docker installation.
+The installation of docker is out of scope of this tutorial, please refer the official [document](https://docs.docker.com/installation/ubuntulinux/) for the docker installation.
 
 ### Rules
 
@@ -39,10 +39,10 @@ The installation of docker is out of scale of this tutorial, please refer the of
                                     ubuntu /bin/bash
 ```
 
-#### Run docker container with ports opened by option `-p` (TODO)
+#### Run docker container with ports opened by option `-p` 
 
 ``` bash
-    > docker run -t -i ubuntu:14.04.2 /bin/bash
+    > docker run -t -i -p 80:8080 ubuntu:14.04.2 /bin/bash
 ```
 
 ### Manage Image

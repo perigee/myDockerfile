@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Go with Docker</title>
+    <title>Go with Docker 101</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style type="text/css">
       @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
@@ -21,7 +21,7 @@
 
 class: center, middle
 
-# *Go* with Docker 
+# *Go* with Docker - 101
 
 > By developers, for developers 
 
@@ -37,18 +37,19 @@ class: center, middle
 
 ### - Introduction
 ### - Definitions
-### - Running container
-### - Create image
-### - Coordination among containers
-### - Local private registry (Your own HUB)
+### - Run container
+### - Manage image
+
+
 ---
 
 
 
 # Introduction
 
+> **!** *Docker needs the kernel be 3.10 or up*
 
-> Docker is an open platform for developers and sysadmins to build, ship, and run distributed applications. 
+Docker is an open platform for developers and sysadmins to build, ship, and run distributed applications. 
 
 
 #### Consisting of:
@@ -60,6 +61,7 @@ class: center, middle
 
 #### Objectives:
  
+
 - Docker enables apps to be quickly assembled from components and eliminates the friction between development, QA, and production environments. 
 
 - IT can ship faster and run the same app, unchanged, on laptops, data center VMs, and any cloud.
@@ -94,29 +96,148 @@ A Docker container holds everything that is needed for an application to run. Ea
 
 ---
 
-3. Running container
-4. Create image
-5. Coordination among containers
+# Running containers
+
+- Getting images from Docker Hub and running in background mode
+  - Pull and run
+```bash
+> docker images
+> docker run -d --name testit ubuntu:14.04.2 ping www.free.fr
+> docker ps
+```
+  - Attach container
+```bash
+> docker attach containerID # or Name
+```
+  - Unattach container by pressing `Ctrl+p`  `Ctrl+q` 
+
+  - Check container output
+```bash
+> docker logs -f containerID
+```
+  - Stop container
+```bash
+> docker stop containerID 
+```
 
 ---
 
-# Run
+# Running containers
 
-1. `docker run`
-2. `docker stop`
-3. `docker attach`
-4. `ctrl+p ctrl+q` unatach the docker container
-
----
-
-# Create image
+- Running in interactive mode
 
 ```bash
+user@yourmachine:$ docker run -t -i --name testit ubuntu:14.04.2 /bin/bash
+root@4d7es4d7e4s:$ exit # will halt the container
+```
 
-> docker commit
+- Commit the changes made inside container
+
+```bash
+> docker commit containerID imageName
+```
+
+# *Demo ...*
+
+
+---
+
+# Running containers with Data Volume
+
+A data volume is a specially-designated directory within one or more containers that bypasses the Union File System. Data volumes provide several useful features for persistent or shared data:
+
+Volumes are initialized when a container is created. If the container's base image contains data at the specified mount point, that data is copied into the new volume.
+
+- Data volumes can be shared and reused among containers.
+- Changes to a data volume are made directly.
+- Changes to a data volume will not be included when you update an image.
+- Data volumes persist even if the container itself is deleted.
+
+Data volumes are designed to persist data, independent of the container's life cycle.
+
+---
+
+# Run container with data volume and ports
+
+- Run docker container with [volume](https://docs.docker.com/userguide/dockervolumes/) mounted by option `-v`
+
+``` bash
+    > docker run -t -i -v hostDir1:containerDir1 \
+                       -v hostDir2:containerDir2 \
+                       ubuntu:14.04.2 /bin/bash
+```
+
+- Set volume as privileged, Ex. active host usb 
+
+``` bash
+    > docker run -t -i --privileged -v /dev/bus/usb:/dev/bus/usb \
+                                    ubuntu /bin/bash
+```
+
+- Run docker container with ports opened by option `-p`
+
+``` bash
+    > docker run -t -i -p 80:8080 -p 5060:5060/udp \
+                       ubuntu:14.04.2 /bin/bash
+```
+- Map all ports inside container to a random high port of container host with `-P` 
+
+``` bash
+    > docker run -t -i -P ubuntu:14.04.2 /bin/bash
+```
+
+---
+class: center, middle
+#Demo ...
+---
+
+# Manage the images
+
+- Save/load images
+ ```bash
+ > docker save -o image.tar imageName
+ > docker load -i image.tar
+
+ ```
+- Build image from a Dockerfile
+``` bash
+> docker build -t "MyDockerImageName:tag" -f MyDockerfile 
+# by default, the file name is Dockerfile
+```
+- Build your own local registry (Private Hub)
+
+  - *To be continued ...*
+
+---
+
+# A taste of Dockerfile
 
 ```
+# DOCKER-VERSION 1.6.0
+# Erlang docker image
+
+FROM ubuntubase:v1
+MAINTAINER Dr. Who  <you@gmail.com>
+
+
+# add the erlang repo and key
+RUN echo "deb http://packages.erlang-solutions.com/ubuntu trusty contrib" >> \
+ /etc/apt/sources.list
+RUN DEBIAN_FRONTEND=noninteractive apt-get install wget -y
+RUN wget http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+RUN apt-key add erlang_solutions.asc
+
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    erlang \
+    rebar
+
+```
+
 ---
+
+
+
 
 class: center, middle
 
