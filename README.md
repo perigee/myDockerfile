@@ -97,6 +97,22 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     > docker build -t "MyDockerImageName:tag" -f MyDockerfile # by default, the file name is Dockerfile
 ```
 
+
+## Coordination among docker containers
+
+### Use same data volume container as common data layer
+
+#### create container
+
+```bash
+$ docker create -v /home/docker:/docker --name docker ubuntu:14.04.2
+9aa88c08f319cd1e4515c3c46b0de7cc9aa75e878357b1e96f91e2c773029f03
+$  docker run --rm --volumes-from docker ubuntu ls -la /docker
+```
+
+
+
+
 ## Management
 
 ### Pull the images from Docker public repository

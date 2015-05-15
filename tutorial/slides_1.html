@@ -134,8 +134,23 @@ root@4d7es4d7e4s:$ exit # will halt the container
 - Commit the changes made inside container
 
 ```bash
+# see the changes inside container A-add, D-delete, C-change
+> docker diff containerID 
 > docker commit containerID imageName
 ```
+- Run container using `create, start, stop` routine
+
+```bash
+$ docker create -d --name test/ping ubuntu:14.04.2 ping www.free.fr
+$ docker ps -l
+$ docker start test/ping
+$ docker attach test/ping # quit with C-p C-q
+$ docker stop test/ping
+```
+
+
+---
+class: center, middle
 
 # *Demo ...*
 
