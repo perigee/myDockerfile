@@ -104,6 +104,7 @@ A Docker container holds everything that is needed for an application to run. Ea
 > docker images
 > docker run -d --name testit ubuntu:14.04.2 ping www.free.fr
 > docker ps
+> docker inspect testit # or containerID
 ```
   - Attach container
 ```bash
@@ -216,7 +217,7 @@ class: center, middle
  ```
 - Build image from a Dockerfile
 ``` bash
-> docker build -t "MyDockerImageName:tag" -f MyDockerfile 
+> docker build -t "MyDockerImageName:tag"  path/Dockerfile 
 # by default, the file name is Dockerfile
 ```
 - Build your own local registry (Private Hub)
@@ -257,9 +258,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 class: center, middle
 
 # Thank you, Questions ?
- 
-
-
 
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">

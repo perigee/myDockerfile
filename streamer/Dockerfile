@@ -52,4 +52,5 @@ ADD nginx.conf /usr/local/nginx/conf/nginx.conf
 
 EXPOSE 554 80 1935
 
-CMD /usr/local/nginx/sbin/nginx
+CMD ["/bin/bash"]
+CMD ["/usr/local/nginx/sbin/nginx"]
