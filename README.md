@@ -98,6 +98,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 ```
 
 
+
+
 ## Coordination among docker containers
 
 ### Use same data volume container as common data layer
@@ -120,8 +122,15 @@ $  docker run --rm --volumes-from docker ubuntu ls -la /docker
 
 ### Build private local repository
 
+The tutorial can be found [here](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-private-docker-registry-on-ubuntu-14-04)
+
+
+
 #### Ref
 1. [Ref1](https://www.vultr.com/docs/setup-your-own-docker-registry-on-coreos)
+
+
+
 
 
 
