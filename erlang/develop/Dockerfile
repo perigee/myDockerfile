@@ -13,5 +13,5 @@ RUN apt-key add erlang_solutions.asc
 
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    erlang \
+    erlang-nox \
     rebar

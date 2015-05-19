@@ -23,6 +23,8 @@ RUN ./configure --prefix=/usr --enable-shared --disable-sound \
 RUN make dep && make && make install && ldconfig
 
 
+
+
 EXPOSE 80
 
 CMD ["asterisk"]
