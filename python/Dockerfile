@@ -30,6 +30,9 @@ RUN rm get-pip.py
 RUN pip install -U pip setuptools
 RUN pip install virtualenv
 
+################################
+## GET zeromq ready 
+################################
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libtool \
@@ -37,10 +40,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     autoconf \
     automake \
     uuid-dev 
-    
-################################
-## GET zeromq ready 
-################################
 
 RUN wget https://download.libsodium.org/libsodium/releases/$libsodium.tar.gz
 RUN wget http://download.zeromq.org/$zeromq.tar.gz
@@ -56,3 +55,9 @@ RUN ./configure
 RUN make && make install
 
 ## ADD working dir into the container
+
+
+## expose the ports for zmq communciation
+EXPOSE 5556 5557 
+
+CMD ['cd','/home/src']
