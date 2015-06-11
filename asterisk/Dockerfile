@@ -50,6 +50,7 @@ RUN make && make install
 RUN make samples
 
 
+
 ## define asterisk UDP call ports 
 RUN sed -i "s/rtpstart=10000/rtpstart=16384/g" /etc/asterisk/rtp.conf
 RUN sed -i "s/rtpend=20000/rtpend=16394/g" /etc/asterisk/rtp.conf
@@ -58,6 +59,8 @@ RUN sed -i "s/rtpend=20000/rtpend=16394/g" /etc/asterisk/rtp.conf
 ## Install demo package
 WORKDIR /usr/share/nginx/html
 RUN svn checkout http://sipml5.googlecode.com/svn/trunk/ phone
+
+RUN mkdir /etc/asterisk/keys
 
 
 EXPOSE 80 5060 16384-16394 # expose a range of 10 ports for 10 simultaneously calls
