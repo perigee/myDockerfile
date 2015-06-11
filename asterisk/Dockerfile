@@ -10,11 +10,30 @@ MAINTAINER Jun HU <junhufr@gmail.com>
 # Dependencies
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    build-essential git subversion wget \
+    build-essential \
+    git \
+    subversion \
+    wget \
+    libsrtp-dev \
+    libjansson-dev \
+    libncurses-dev \
+    uuid-dev \
+    libgnutls-dev \
+    libneon27-gnutls-dev \
+    libsnmp-dev \
+    libsqlite3-dev \
+    sqlite3 \
+    libspeex-dev \
+    libgsm1-dev 
 
 RUN mkdir /home/src
 WORKDIR /home/src
+
+
 RUN git clone https://github.com/asterisk/pjproject.git
+RUN svn checkout http://svn.asterisk.org/svn/asterisk/branches/13 asterisk-13
+
+
 WORKDIR	/home/src/pjproject
 RUN git checkout tags/pjproject-2.3
 RUN ./configure --prefix=/usr --enable-shared --disable-sound \
@@ -22,10 +41,12 @@ RUN ./configure --prefix=/usr --enable-shared --disable-sound \
 			      --disable-opencore-amr    
 RUN make dep && make && make install && ldconfig
 
+WORKDIR /home/src/asterisk-13
+RUN ./configure --with-crypto --with-ssl --with-srtp
+RUN ./contrib/scripts/install_prereq install
+RUN ./contrib/scripts/install_prereq install-unpackaged
+RUN make && make install
 
+EXPOSE 80 5060 16384 16385 16386 16387 16388 16389 16390 16391 16392 16393 16394
 
-
-EXPOSE 80
-
-CMD ["asterisk"]
-CMD ["asterisk -r"]
+CMD ["/bin/asterisk"]
