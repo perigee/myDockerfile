@@ -9,7 +9,8 @@ MAINTAINER Jun HU <junhufr@gmail.com>
 RUN echo "deb http://packages.erlang-solutions.com/ubuntu trusty contrib" >> /etc/apt/sources.list
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    openssl
+    openssl \
+    wget
 
 RUN wget http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
 RUN apt-key add erlang_solutions.asc
