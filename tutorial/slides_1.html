@@ -404,9 +404,13 @@ class: center, middle
  ```
 - Build image from a Dockerfile
 ``` bash
-> docker build -t "MyDockerImageName:tag"  -f path/Dockerfile .
-# by default, the file name is Dockerfile
+> docker build -t "MyDockerImageName:tag"  --rm -f path/Dockerfile .
+# by default, the file name is Dockerfile, 
 ```
+
+Option `--rm` will remove the intermedia containers after successful building. 
+
+
 - Build your own local registry (Private Hub)
 
   - *To be continued ...*
