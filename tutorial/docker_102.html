@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Go with Docker 102</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+
+
+      /* latin */
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Droid Serif'), local('DroidSerif'), url(https://fonts.gstatic.com/s/droidserif/v6/0AKsP294HTD-nvJgucYTaI4P5ICox8Kq3LLUNMylGO4.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Droid Serif Bold'), local('DroidSerif-Bold'), url(https://fonts.gstatic.com/s/droidserif/v6/QQt14e8dY39u-eYBZmppwYlIZu-HDpmDIZMigmsroc4.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Droid Serif Italic'), local('DroidSerif-Italic'), url(https://fonts.gstatic.com/s/droidserif/v6/cj2hUnSRBhwmSPr9kS5898u2Q0OS-KeTAWjgkS85mDg.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ViZhet7Ak-LRXZMXzuAfkTTOQ_MqJVwkKsUn0wKzc2I.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+20B4, U+2DE0-2DFF, U+A640-A69F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ViZhet7Ak-LRXZMXzuAfkTUj_cnvWIuuBMVgbX098Mw.woff2) format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ViZhet7Ak-LRXZMXzuAfkUbcKLIaa1LC45dFaAfauRA.woff2) format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ViZhet7Ak-LRXZMXzuAfkWo_sUJ8uO4YLWRInS22T3Y.woff2) format('woff2');
+  unicode-range: U+0370-03FF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ViZhet7Ak-LRXZMXzuAfkSYE0-AqJ3nfInTTiDXDjU4.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ViZhet7Ak-LRXZMXzuAfkY4P5ICox8Kq3LLUNMylGO4.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Ubuntu Mono Bold'), local('UbuntuMono-Bold'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ceqTZGKHipo8pJj4molytp6iIh_FvlUHQwED9Yt5Kbw.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+20B4, U+2DE0-2DFF, U+A640-A69F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Ubuntu Mono Bold'), local('UbuntuMono-Bold'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ceqTZGKHipo8pJj4molyti_vZmeiCMnoWNN9rHBYaTc.woff2) format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Ubuntu Mono Bold'), local('UbuntuMono-Bold'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ceqTZGKHipo8pJj4molytiFaMxiho_5XQnyRZzQsrZs.woff2) format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Ubuntu Mono Bold'), local('UbuntuMono-Bold'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ceqTZGKHipo8pJj4molytgalQocB-__pDVGhF3uS2Ks.woff2) format('woff2');
+  unicode-range: U+0370-03FF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Ubuntu Mono Bold'), local('UbuntuMono-Bold'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ceqTZGKHipo8pJj4molytujkDdvhIIFj_YMdgqpnSB0.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Ubuntu Mono Bold'), local('UbuntuMono-Bold'), url(https://fonts.gstatic.com/s/ubuntumono/v6/ceqTZGKHipo8pJj4molytolIZu-HDpmDIZMigmsroc4.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Ubuntu Mono Italic'), local('UbuntuMono-Italic'), url(https://fonts.gstatic.com/s/ubuntumono/v6/KAKuHXAHZOeECOWAHsRKAxNcqx07xvyppV96iFRdwiM.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+20B4, U+2DE0-2DFF, U+A640-A69F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Ubuntu Mono Italic'), local('UbuntuMono-Italic'), url(https://fonts.gstatic.com/s/ubuntumono/v6/KAKuHXAHZOeECOWAHsRKA-fhZE2STYI3KzBGzrJG_ik.woff2) format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Ubuntu Mono Italic'), local('UbuntuMono-Italic'), url(https://fonts.gstatic.com/s/ubuntumono/v6/KAKuHXAHZOeECOWAHsRKA26cj8HaeL2jS4NIBPr3RFo.woff2) format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Ubuntu Mono Italic'), local('UbuntuMono-Italic'), url(https://fonts.gstatic.com/s/ubuntumono/v6/KAKuHXAHZOeECOWAHsRKA9cKKn5Xt5n-nnvkqIBMZms.woff2) format('woff2');
+  unicode-range: U+0370-03FF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Ubuntu Mono Italic'), local('UbuntuMono-Italic'), url(https://fonts.gstatic.com/s/ubuntumono/v6/KAKuHXAHZOeECOWAHsRKA0_0lycXMw8PhobHtu2Qgco.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Ubuntu Mono Italic'), local('UbuntuMono-Italic'), url(https://fonts.gstatic.com/s/ubuntumono/v6/KAKuHXAHZOeECOWAHsRKA8u2Q0OS-KeTAWjgkS85mDg.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+
+/* latin-ext */
+@font-face {
+  font-family: 'Yanone Kaffeesatz';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Yanone Kaffeesatz Regular'), local('YanoneKaffeesatz-Regular'), url(https://fonts.gstatic.com/s/yanonekaffeesatz/v7/YDAoLskQQ5MOAgvHUQCcLV83L2yn_om9bG0a6EHWBso.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Yanone Kaffeesatz';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Yanone Kaffeesatz Regular'), local('YanoneKaffeesatz-Regular'), url(https://fonts.gstatic.com/s/yanonekaffeesatz/v7/YDAoLskQQ5MOAgvHUQCcLfGwxTS8d1Q9KiDNCMKLFUM.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# *Go* with Docker - 102
+
+> By the developers, for the developers 
+
+
+> Par les développeurs, pour les développeurs
+
+
+> -- Jun HU aka Dr. Who
+ 
+---
+
+# Agenda
+
+### - Summary of 101
+### - Docker volume 
+### - Dockerfile
+### - Manage image with Docker private registry
+
+
+---
+
+
+
+# Introduction
+
+> **!** *Docker needs the kernel be 3.10 or up*
+
+Docker is an open platform for developers and sysadmins to build, ship, and run distributed applications. 
+
+
+#### Consisting of:
+
+- Docker Engine, a portable, lightweight runtime and packaging tool, and 
+
+- Docker Hub, a cloud service for sharing applications and automating workflows;
+
+
+#### Objectives:
+ 
+
+- Docker enables apps to be quickly assembled from components and eliminates the friction between development, QA, and production environments. 
+
+- IT can ship faster and run the same app, unchanged, on laptops, data center VMs, and any cloud.
+
+---
+
+# Different from Virtual Machines 
+##### -- ("Dedicated" to Asing)
+
+### Virtual Machines
+
+Each virtualized application includes not only the application - which may be only 10s of MB - and the necessary binaries and libraries, but also an entire guest operating system - which may weigh 10s of GB.
+
+
+### Docker
+
+The Docker Engine container comprises just the application and its dependencies. It runs as an isolated process in userspace on the host operating system, sharing the kernel with other containers. Thus, it enjoys the resource isolation and allocation benefits of VMs but is much more portable and efficient.
+
+---
+
+
+# Definitions
+
+#### Docker images
+A Docker image is a read-only template. Images are used to create Docker containers. Docker provides a simple way to build new images or update/download existing images.
+
+#### Docker registries
+Docker registries hold images. These are public or private stores from which you upload or download images. The public Docker registry is called *Docker Hub*. 
+
+#### Docker containers
+A Docker container holds everything that is needed for an application to run. Each container is created from a Docker image. Docker containers can be run, started, stopped, moved, and deleted. Each container is an isolated and secure application platform. 
+
+---
+
+# Running containers
+
+- Getting images from Docker Hub and running in background mode
+  - Pull and run
+```bash
+> docker images
+> docker run -d --name testit ubuntu:14.04.2 ping www.free.fr
+> docker ps
+> docker inspect testit # or containerID
+```
+  - Attach container
+```bash
+> docker attach containerID # or Name
+```
+  - Unattach container by pressing `Ctrl+p`  `Ctrl+q` 
+
+  - Check container output
+```bash
+> docker logs -f containerID
+```
+  - Stop container
+```bash
+> docker stop containerID 
+```
+
+---
+
+# Running containers
+
+- Running in interactive mode
+
+```bash
+user@yourmachine:$ docker run -t -i --name testit ubuntu:14.04.2 /bin/bash
+root@4d7es4d7e4s:$ exit # will halt the container
+```
+
+- Commit the changes made inside container
+
+```bash
+# see the changes inside container A-add, D-delete, C-change
+> docker diff containerID 
+> docker commit containerID imageName
+```
+- Run container using `create, start, stop` routine
+
+```bash
+$ docker create -d --name test/ping ubuntu:14.04.2 ping www.free.fr
+$ docker ps -l
+$ docker start test/ping
+$ docker attach test/ping # quit with C-p C-q
+$ docker stop test/ping
+```
+
+
+---
+class: center, middle
+
+# *Demo ...*
+
+
+---
+
+# Running containers with Data Volume
+
+A data volume is a specially-designated directory within one or more containers that bypasses the Union File System. Data volumes provide several useful features for persistent or shared data:
+
+Volumes are initialized when a container is created. If the container's base image contains data at the specified mount point, that data is copied into the new volume.
+
+- Data volumes can be shared and reused among containers.
+- Changes to a data volume are made directly.
+- Changes to a data volume will not be included when you update an image.
+- Data volumes persist even if the container itself is deleted.
+
+Data volumes are designed to persist data, independent of the container's life cycle.
+
+---
+
+# Run container with data volume and ports
+
+- Run docker container with [volume](https://docs.docker.com/userguide/dockervolumes/) mounted by option `-v`
+
+``` bash
+    > docker run -t -i -v hostDir1:containerDir1 \
+                       -v hostDir2:containerDir2 \
+                       ubuntu:14.04.2 /bin/bash
+```
+
+- Set volume as privileged, Ex. active host usb 
+
+``` bash
+    > docker run -t -i --privileged -v /dev/bus/usb:/dev/bus/usb \
+                                    ubuntu /bin/bash
+```
+
+- Run docker container with ports opened by option `-p`
+
+``` bash
+    > docker run -t -i -p 80:8080 -p 5060:5060/udp \
+                       ubuntu:14.04.2 /bin/bash
+```
+- Map all ports inside container to a random high port of container host with `-P` 
+
+``` bash
+    > docker run -t -i -P ubuntu:14.04.2 /bin/bash
+```
+
+---
+class: center, middle
+#Demo ...
+---
+
+# Manage the images
+
+- Save/load images
+ ```bash
+ > docker save -o image.tar imageName
+ > docker load -i image.tar
+
+ ```
+- Build image from a Dockerfile
+``` bash
+> docker build -t "MyDockerImageName:tag"  --rm -f path/Dockerfile .
+# by default, the file name is Dockerfile, 
+```
+
+Option `--rm` will remove the intermedia containers after successful building. 
+
+
+- Build your own local registry (Private Hub)
+
+  - *To be continued ...*
+
+---
+
+# A taste of Dockerfile
+
+```
+# DOCKER-VERSION 1.6.0
+# Erlang docker image
+
+FROM ubuntubase:v1
+MAINTAINER Dr. Who  <you@gmail.com>
+
+
+# add the erlang repo and key
+RUN echo "deb http://packages.erlang-solutions.com/ubuntu trusty contrib" >> \
+ /etc/apt/sources.list
+RUN DEBIAN_FRONTEND=noninteractive apt-get install wget -y
+RUN wget http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+RUN apt-key add erlang_solutions.asc
+
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    erlang \
+    rebar
+
+```
+
+---
+
+
+
+
+class: center, middle
+
+# Thank you, Questions ?
+
+    </textarea>
+    <script src="js/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
