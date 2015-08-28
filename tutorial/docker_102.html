@@ -78,13 +78,61 @@ class: center, middle
 
 ### Data volume from host file system
 
+```bash
+$ docker create -ti -v /home/repo:/home/dockerRepo ubuntu /bin/bash
+```
+
 ### Data volume container 
 
 - Create a volume container
 
-- Line volume container to another container
+
+```bash
+$ docker create -ti -v /data --name dbdata ubuntu /bin/true
+```
+
+PS: 
+
+- `/bin/true` gives the possibility to create a new container even if it terminates still keeps the resulting container image and metadata lying around which can still be linked to
+
+
+
+---
+# Data volume container
+
+
+### Line volume container to another container
+
+```bash
+$ docker run -d --volumes-from dbdata --name db1 postgresImage
+$ docker run -d --volumes-from dbdata --name db2 postgresImage
+```
+
+PS:
+- `/data` is the folder keeping the persistent data. 
+- data volume container will not be deleted if there is at least a container with a reference to it. 
+
+---
+# Data volume container
 
 ### Backup, restore, or migrate data volumes 
+
+- backup from a data volume container
+
+```bash
+$ docker run --volumes-from dbdata -v $(pwd):/backup ubuntu \
+                          tar cvf /backup/backup.tar /dbdata
+```
+
+- restore the data to another container
+
+```bash 
+$ docker run -v /dbdata --name dbdata2 ubuntu /bin/bash
+$ docker run --volumes-from dbdata2 -v $(pwd):/backup ubuntu \
+                      cd /dbdata && tar xvf /backup/backup.tar
+```
+
+
 
 ---
 class: center, middle
