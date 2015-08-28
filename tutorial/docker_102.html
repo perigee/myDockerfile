@@ -63,6 +63,12 @@ class: center, middle
 - regardless of kernel (3.0+)
 - regardless host distribution (ubuntu container on RedHat host)
 
+
+
+
+
+
+
 ### Comparing to VM
 
 - processes are isolated, but run straight on the host
@@ -72,8 +78,21 @@ class: center, middle
 
 
 ---
+class: center, middle
 
- 
+# Comparing to VM
+
+
+
+## Different architectures 
+
+.image-30[![vm](https://www.docker.com/sites/default/files/what-is-docker-diagram.png)] .image-30[![container](https://www.docker.com/sites/default/files/what-is-vm-diagram.png)]
+
+###  VM   v.s.     Container 
+
+---
+
+--- 
 # Managing data in containers
 
 ### Data volume from host file system
@@ -101,7 +120,7 @@ PS:
 # Data volume container
 
 
-### Line volume container to another container
+### Attach volume container to another container
 
 ```bash
 $ docker run -d --volumes-from dbdata --name db1 postgresImage
@@ -113,6 +132,7 @@ PS:
 - data volume container will not be deleted if there is at least a container with a reference to it. 
 
 ---
+
 # Data volume container
 
 ### Backup, restore, or migrate data volumes 
@@ -133,11 +153,116 @@ $ docker run --volumes-from dbdata2 -v $(pwd):/backup ubuntu \
 ```
 
 
+---
+
+# Link the containers
+
+#### Container linking 
+
+Linking system allows you to link multiple containers together and send connection information from one to another. When containers are linked, information about a source container can be sent to a recipient container. This allows the recipient to see selected data describing aspects of the source container.
+
+
+###### create a db container
+
+```bash
+$ docker run -d --name db postgresContainer
+```
+
+###### link it to webapp container
+
+```bash
+$ docker run -d -P --name web --link dbdata:db training/webapp python app.py
+```
+
+---
+
+
+# Pass the `db` info through `ENV`
+
+Docker exposes each Docker originated environment variable from the source container as an environment variable in the target. For each variable Docker creates an <alias>_ENV_<name> variable in the target container. The variable’s value is set to the value Docker used when it started the source container.
+
+
+```bash
+$ docker run --rm --name web2 --link dbdata:db training/webapp env
+
+    DB_NAME=/web2/db
+    DB_PORT=tcp://172.17.0.5:5432
+    DB_PORT_5432_TCP=tcp://172.17.0.5:5432
+    DB_PORT_5432_TCP_PROTO=tcp
+    DB_PORT_5432_TCP_PORT=5432
+    DB_PORT_5432_TCP_ADDR=172.17.0.5
+```
+
+#### Caution: Name your container well
+
+
+
+
+---
+# iptable 
+
+When you're running a container without specificing port mapping on host, you can still use `iptable` routing the traffic
+
+#### To expose the container port 8000 on your localhosts port 8001:
+
+```bash
+$ iptables -t nat -A  DOCKER -p tcp --dport 8001 -j DNAT \
+                       --to-destination 172.17.0.19:8000
+```
+---
+
+
+--- 
+# Provision with Ansible
+
+
+#### Normal ansible push routing
+
+##### Get container ip by 
+
+```bash
+$ docker inspect myCnter | grep IPA
+```
+
+##### Run ansible playbook against this ip
+
+#### Pull style 
+
+##### Include the ansible playbook repo inside `Dockerfile` before creating the images
+
+##### Create the docker image based on ansible-included `Dockerfile`, `docker build` will install the stuff during the image creation. 
+
+![ansible](http://cdn2.hubspot.net/hub/330046/file-446822113-png/ANSI_logotype_web.png)
+![logo](https://www.docker.com/sites/all/themes/docker/assets/images/logo.png)
+
+
+
+---
+
+# Cooperate among the Containers
+
+
+### Compose
+
+Compose is a tool for defining and running multi-container applications with Docker. With Compose, you define a multi-container application in a single file, then spin your application up in a single command which does everything that needs to be done to get it running.
+
+### Swan
+
+Docker Swarm is native clustering for Docker. It allows you create and access to a pool of Docker hosts using the full suite of Docker tools. Because Docker Swarm serves the standard Docker API, any tool that already communicates with a Docker daemon can use Swarm to transparently scale to multiple hosts.
+
+
 
 ---
 class: center, middle
 
 # Thank you, Questions ?
+
+
+---
+# Reference 
+
+- http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/
+
 
     </textarea>
 
