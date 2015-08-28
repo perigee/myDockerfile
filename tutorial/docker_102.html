@@ -8,9 +8,12 @@
 <link rel="stylesheet" type="text/css" href="js/slides.css">
 
 
+
   </head>
   <body>
-    <textarea id="source">
+
+
+ <textarea id="source">
 
 
 
@@ -32,235 +35,68 @@ class: center, middle
 
 ### - Summary of 101
 ### - Docker volume 
-### - Dockerfile
+### - Network (iptable)
+### - Dockerfile again
 ### - Manage image with Docker private registry
 
 
+### - Working with Ansible (push and pull)
+
 ---
 
 
-
-# Introduction
-
-> **!** *Docker needs the kernel be 3.10 or up*
-
-Docker is an open platform for developers and sysadmins to build, ship, and run distributed applications. 
+# Summary of 101 ![logo](https://www.docker.com/sites/all/themes/docker/assets/images/logo.png)
 
 
-#### Consisting of:
+### An opensource app deployment platform coded in `Go`
+### Sandbox - container equals isolated process(es)
+### Run application as docker container
+### Compose the containers to build complex system
 
-- Docker Engine, a portable, lightweight runtime and packaging tool, and 
 
-- Docker Hub, a cloud service for sharing applications and automating workflows;
+---
+
+# Summary of 101 ![logo](https://www.docker.com/sites/all/themes/docker/assets/images/logo.png)
+
+### Run everywhere (share kernel with linux host)
+
+- regardless of kernel (3.0+)
+- regardless host distribution (ubuntu container on RedHat host)
+
+### Comparing to VM
+
+- processes are isolated, but run straight on the host
+- native CPU performance
+- a few percentage shave off for optional accounting
+- small overhead on network performance
 
 
-#### Objectives:
+---
+
  
+# Managing data in containers
 
-- Docker enables apps to be quickly assembled from components and eliminates the friction between development, QA, and production environments. 
+### Data volume from host file system
 
-- IT can ship faster and run the same app, unchanged, on laptops, data center VMs, and any cloud.
+### Data volume container 
 
----
+- Create a volume container
 
-# Different from Virtual Machines 
-##### -- ("Dedicated" to Asing)
+- Line volume container to another container
 
-### Virtual Machines
-
-Each virtualized application includes not only the application - which may be only 10s of MB - and the necessary binaries and libraries, but also an entire guest operating system - which may weigh 10s of GB.
-
-
-### Docker
-
-The Docker Engine container comprises just the application and its dependencies. It runs as an isolated process in userspace on the host operating system, sharing the kernel with other containers. Thus, it enjoys the resource isolation and allocation benefits of VMs but is much more portable and efficient.
+### Backup, restore, or migrate data volumes 
 
 ---
-
-
-# Definitions
-
-#### Docker images
-A Docker image is a read-only template. Images are used to create Docker containers. Docker provides a simple way to build new images or update/download existing images.
-
-#### Docker registries
-Docker registries hold images. These are public or private stores from which you upload or download images. The public Docker registry is called *Docker Hub*. 
-
-#### Docker containers
-A Docker container holds everything that is needed for an application to run. Each container is created from a Docker image. Docker containers can be run, started, stopped, moved, and deleted. Each container is an isolated and secure application platform. 
-
----
-
-# Running containers
-
-- Getting images from Docker Hub and running in background mode
-  - Pull and run
-```bash
-> docker images
-> docker run -d --name testit ubuntu:14.04.2 ping www.free.fr
-> docker ps
-> docker inspect testit # or containerID
-```
-  - Attach container
-```bash
-> docker attach containerID # or Name
-```
-  - Unattach container by pressing `Ctrl+p`  `Ctrl+q` 
-
-  - Check container output
-```bash
-> docker logs -f containerID
-```
-  - Stop container
-```bash
-> docker stop containerID 
-```
-
----
-
-# Running containers
-
-- Running in interactive mode
-
-```bash
-user@yourmachine:$ docker run -t -i --name testit ubuntu:14.04.2 /bin/bash
-root@4d7es4d7e4s:$ exit # will halt the container
-```
-
-- Commit the changes made inside container
-
-```bash
-# see the changes inside container A-add, D-delete, C-change
-> docker diff containerID 
-> docker commit containerID imageName
-```
-- Run container using `create, start, stop` routine
-
-```bash
-$ docker create -d --name test/ping ubuntu:14.04.2 ping www.free.fr
-$ docker ps -l
-$ docker start test/ping
-$ docker attach test/ping # quit with C-p C-q
-$ docker stop test/ping
-```
-
-
----
-class: center, middle
-
-# *Demo ...*
-
-
----
-
-# Running containers with Data Volume
-
-A data volume is a specially-designated directory within one or more containers that bypasses the Union File System. Data volumes provide several useful features for persistent or shared data:
-
-Volumes are initialized when a container is created. If the container's base image contains data at the specified mount point, that data is copied into the new volume.
-
-- Data volumes can be shared and reused among containers.
-- Changes to a data volume are made directly.
-- Changes to a data volume will not be included when you update an image.
-- Data volumes persist even if the container itself is deleted.
-
-Data volumes are designed to persist data, independent of the container's life cycle.
-
----
-
-# Run container with data volume and ports
-
-- Run docker container with [volume](https://docs.docker.com/userguide/dockervolumes/) mounted by option `-v`
-
-``` bash
-    > docker run -t -i -v hostDir1:containerDir1 \
-                       -v hostDir2:containerDir2 \
-                       ubuntu:14.04.2 /bin/bash
-```
-
-- Set volume as privileged, Ex. active host usb 
-
-``` bash
-    > docker run -t -i --privileged -v /dev/bus/usb:/dev/bus/usb \
-                                    ubuntu /bin/bash
-```
-
-- Run docker container with ports opened by option `-p`
-
-``` bash
-    > docker run -t -i -p 80:8080 -p 5060:5060/udp \
-                       ubuntu:14.04.2 /bin/bash
-```
-- Map all ports inside container to a random high port of container host with `-P` 
-
-``` bash
-    > docker run -t -i -P ubuntu:14.04.2 /bin/bash
-```
-
----
-class: center, middle
-#Demo ...
----
-
-# Manage the images
-
-- Save/load images
- ```bash
- > docker save -o image.tar imageName
- > docker load -i image.tar
-
- ```
-- Build image from a Dockerfile
-``` bash
-> docker build -t "MyDockerImageName:tag"  --rm -f path/Dockerfile .
-# by default, the file name is Dockerfile, 
-```
-
-Option `--rm` will remove the intermedia containers after successful building. 
-
-
-- Build your own local registry (Private Hub)
-
-  - *To be continued ...*
-
----
-
-# A taste of Dockerfile
-
-```
-# DOCKER-VERSION 1.6.0
-# Erlang docker image
-
-FROM ubuntubase:v1
-MAINTAINER Dr. Who  <you@gmail.com>
-
-
-# add the erlang repo and key
-RUN echo "deb http://packages.erlang-solutions.com/ubuntu trusty contrib" >> \
- /etc/apt/sources.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get install wget -y
-RUN wget http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
-RUN apt-key add erlang_solutions.asc
-
-RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    erlang \
-    rebar
-
-```
-
----
-
-
-
-
 class: center, middle
 
 # Thank you, Questions ?
 
     </textarea>
+
     <script src="js/remark-latest.min.js">
+
     </script>
+
     <script>
       var slideshow = remark.create();
     </script>
