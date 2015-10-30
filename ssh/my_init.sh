@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/usr/sbin/sshd -D FOREGROUND
+/usr/sbin/sshd -D
