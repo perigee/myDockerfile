@@ -4,6 +4,7 @@ MAINTAINER Jun HU <junhufr@gmail.com>
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openssh-server \
+    emacs24-nox \
     sudo
 
 RUN mkdir /var/run/sshd
