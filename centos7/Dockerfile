@@ -4,7 +4,7 @@ MAINTAINER jun HU
 
 
 RUN yum update -y
-RUN yum install -y sudo openssh-server emacs-nox openssh-client
+RUN yum install -y sudo openssh-server emacs-nox openssh-clients
 RUN mkdir /var/run/sshd
 
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
