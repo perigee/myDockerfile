@@ -10,7 +10,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 RUN mkdir /var/run/sshd
 
 RUN useradd -m docker && adduser docker sudo
-
+RUN echo "docker ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 RUN mkdir /home/docker/.ssh
 ADD keys/docker.pub /home/docker/.ssh/authorized_keys
