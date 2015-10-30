@@ -69,4 +69,4 @@ RUN mkdir /etc/asterisk/keys
 EXPOSE 80 5060 16384-16394 # expose a range of 10 ports for 10 simultaneously calls
 
 CMD ["/bin/asterisk"]
-CMD ["/usr/sbin/nginx"]
+#CMD ["/usr/sbin/nginx"]
