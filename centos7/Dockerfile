@@ -2,6 +2,11 @@ FROM centos:centos7
 
 MAINTAINER jun HU
 
+# generate locale and set timezone
+RUN localedef --no-archive -i en_US -f UTF-8 en_US.UTF-8
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/UTC /etc/localtime
+RUN echo 'ZONE="UTC"' > /etc/sysconfig/clock && echo 'UTC=True' >> /etc/sysconfig/clock
+
 
 RUN yum update -y
 RUN yum install -y sudo openssh-server emacs-nox openssh-clients
@@ -19,8 +24,12 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
 RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 
-RUN useradd -m docker -G wheel
-RUN usermod -s /bin/bash docker
+
+# setup default user
+RUN useradd docker -G wheel -s /bin/bash -m
+RUN echo 'docker:docker' | chpasswd
+RUN echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
+#RUN su - docker -c "byobu-launcher-install"
 
 
 RUN mkdir /home/docker/.ssh
