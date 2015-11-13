@@ -14,5 +14,9 @@ RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/ss
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
-EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+ADD ssh/my_init.sh /sbin/my_init
+RUN chown root:root /sbin/my_init
+RUN chmod +x /sbin/my_init
+
+EXPOSE 22 9010
+CMD ["/sbin/my_init"]
