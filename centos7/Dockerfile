@@ -1,53 +1,53 @@
-FROM centos:centos7
+# SSH on CentOS-7
+#
+# VERSION               0.0.3
 
-MAINTAINER jun HU
+FROM     centos:centos7
+MAINTAINER Jun HU
 
 # generate locale and set timezone
 RUN localedef --no-archive -i en_US -f UTF-8 en_US.UTF-8
 RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/UTC /etc/localtime
 RUN echo 'ZONE="UTC"' > /etc/sysconfig/clock && echo 'UTC=True' >> /etc/sysconfig/clock
 
+# make sure the package repository is up to date
+RUN yum install -y deltarpm epel-release
+RUN yum --enablerepo=centosplus upgrade -y --skip-broken
 
-RUN yum update -y
-RUN yum install -y sudo openssh-server emacs-nox openssh-clients
-RUN mkdir /var/run/sshd
-
+# install ssh and other packages
+RUN yum install -y openssh openssh-server openssh-clients sudo passwd sed emacs-nox
+# useless:  screen tmux byobu initscripts
+RUN sshd-keygen
+RUN sed -i "s/#UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_config
+RUN sed -i "s/UsePAM.*/UsePAM no/g" /etc/ssh/sshd_config
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
-RUN sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config
-RUN sed -ri 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
-
-
-RUN sed -i 's/#PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-# SSH login fix. Otherwise user is kicked off after login
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-
-RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
-RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
-
+RUN sed -i 's/#PermitRootLogin without-password/PermitRootLogin without-password/' /etc/ssh/sshd_config
 
 # setup default user
-RUN useradd docker -G wheel -s /bin/bash -m
-RUN echo 'docker:docker' | chpasswd
+RUN useradd admin -G wheel -s /bin/bash -m
+RUN echo 'admin:welcome' | chpasswd
 RUN echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
-#RUN su - docker -c "byobu-launcher-install"
+#RUN su - admin -c "byobu-launcher-install"
 
+# install development tools
+#RUN yum groupinstall -y "Development tools"
 
-RUN mkdir /home/docker/.ssh
-ADD keys/docker.pub  /home/docker/.ssh/authorized_keys
-RUN chmod 700 /home/docker/.ssh
-RUN chmod 600 /home/docker/.ssh/authorized_keys
+# add local path
+ADD local.sh /etc/profile.d/local.sh
+RUN chmod +x /etc/profile.d/local.sh
 
-RUN mkdir /etc/ssh/docker
-ADD keys/docker.pub  /etc/ssh/docker/authorized_keys
-RUN sed -i 's/AuthorizedKeysFile      .ssh\/authorized_keys/AuthorizedKeysFile      \/etc\/ssh\/docker\/authorized_keys/' /etc/ssh/sshd_config
+# make ssh dir
+RUN mkdir -p /root/.ssh/
+RUN echo "Host github.com\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
+RUN echo "Host bitbucket.org\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
 
+# create known_hosts
+RUN touch /root/.ssh/known_hosts
 
-RUN chmod 755 /etc/ssh/docker
-RUN chmod 644 /etc/ssh/docker/authorized_keys
+# add bitbuckets key
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts
 
-RUN chown -R docker:docker /home/docker
-RUN chown -R docker:docker /etc/ssh/docker
-
-
-EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+# expose ports for ssh, web
+EXPOSE 22 80 443
+CMD    ["/usr/sbin/sshd", "-D"]
