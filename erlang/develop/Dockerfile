@@ -1,21 +1,15 @@
-# DOCKER-VERSION 1.6.0
-# Erlang docker image
+###############################
+## DOCKER-VERSION 1.8.2
+## Erlang docker image
+###############################
 
 FROM ubuntu:latest
 MAINTAINER Jun HU <junhufr@gmail.com>
 
-
-# add the erlang repo and key
+## essential pkgs
 RUN echo "deb http://packages.erlang-solutions.com/ubuntu trusty contrib" >> /etc/apt/sources.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    openssl \
-    wget
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y openssl emacs24-nox curl
 
-RUN wget http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
-RUN apt-key add erlang_solutions.asc
-
-RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    erlang-nox \
-    rebar
+## add the erlang repe,key and install 
+RUN curl -O http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc &&apt-key add erlang_solutions.asc
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y erlang-nox rebar
