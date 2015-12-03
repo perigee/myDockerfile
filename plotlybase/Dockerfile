@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 MAINTAINER Jun HU <junhufr@gmail.com>
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y openssh-server emacs24-nox sudo supervisor
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y openssh-server sudo supervisor
 RUN apt-get autoremove && apt-get autoclean
 RUN mkdir /var/run/sshd
 
