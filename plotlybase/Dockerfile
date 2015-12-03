@@ -3,7 +3,7 @@ MAINTAINER Jun HU <junhufr@gmail.com>
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y openssh-server emacs24-nox sudo supervisor
 RUN apt-get autoremove && apt-get autoclean
-RUN mkdir /var/run/sshd /var/log/supervisor
+RUN mkdir /var/run/sshd
 
 RUN echo 'root:root' | chpasswd
 RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
