@@ -1,0 +1,41 @@
+---
+
+- apt: update_cache=yes
+
+
+- name: minimum installation with i3
+  apt: name={{ item }} state=present
+  with_items:
+    - software-properties-common
+    - xserver-xorg
+    - xserver-xorg-core
+    - xfonts-base
+    - xinit
+    - x11-xserver-utils
+    - x11-apps
+    - x11-session-utils
+    - x11-utils
+    - xinput
+    - xorg
+    - wicd
+    
+
+
+- apt: name={{ item }} state=present
+  with_items:
+    - build-essential
+    - emacs24-nox
+    - yaml-mode
+    - virtualbox
+    - vagrant
+    - virtualbox-dkms
+    - ack-grep
+    - python-dev
+    - git
+    - openssh
+
+
+- name: install pip 
+  pip: name={{ item }} state=present
+  with_items:
+    - ansible
