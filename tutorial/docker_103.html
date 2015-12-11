@@ -12,12 +12,13 @@
 
 class: center, middle
 
-# *Go* with Docker - 101
+# *Go* with Docker - 103
 
-> By developers, for developers 
+- Docker-compose
+- Docker network
 
-
-> Par développeurs, pour développeurs
+By developers, for developers 
+Par développeurs, pour développeurs
 
 
 > -- Jun HU aka Dr. Who
@@ -27,7 +28,8 @@ class: center, middle
 # Content
 
 ### - Introduction
-### - Definitions
+### - Basic commands
+### - docker-compose.yml 
 ### - Run container
 ### - Manage image
 
@@ -36,6 +38,38 @@ class: center, middle
 ---
 
 
+# Introduction
+
+- What is `Docker-compose`
+    Docker Compose allows you to define your multi-container application with all of its dependencies in a single file, then spin your application up in a single command.
+
+- Installation
+
+    Binary file copy directly.
+
+---
+
+# Basic commands
+
+
+- Runing the application
+
+    ```bash
+    $ docker-compose up -d
+    ```
+
+- Stopping the application
+
+    ```bash
+    $ docker-compose stop
+    ```
+
+- Deleting the application containers
+
+    ```bash
+    $ docker-compose rm -f
+    ```
+---
 
 
 class: center, middle
